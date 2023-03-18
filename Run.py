@@ -51,12 +51,15 @@ def run():
 	else:
 		print("[INFO] Starting the video..")
 		vs = cv2.VideoCapture(args["input"])
+		# vs = cv2.VideoCapture(-1)
 
 	# initialize the video writer (we'll instantiate later if need be)
-	writer = None
+	# writer = True
 
 	# initialize the frame dimensions (we'll set them as soon as we read
 	# the first frame from the video)
+	print(args["output"])
+	writer = None
 	W = None
 	H = None
 
@@ -81,8 +84,9 @@ def run():
 
 	if config.Thread:
 		vs = thread.ThreadingClass(config.url)
-
+	
 	# loop over frames from the video stream
+	image_counter_i = 0
 	while True:
 		# grab the next frame and handle if we are reading from either
 		# VideoCapture or VideoStream
@@ -107,9 +111,11 @@ def run():
 		# if we are supposed to be writing a video to disk, initialize
 		# the writer
 		if args["output"] is not None and writer is None:
+			print("---WRITER IS Being GIVEN---")
 			fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 			writer = cv2.VideoWriter(args["output"], fourcc, 30,
 				(W, H), True)
+			print("---WRITER IS GIVEN--")
 
 		# initialize the current status along with our list of bounding
 		# box rectangles returned by either (1) our object detector or
@@ -298,7 +304,11 @@ def run():
 			writer.write(frame)
 
 		# show the output frame
-		cv2.imshow("Real-Time Monitoring/Analysis Window", frame)
+		# result.write(frame)
+
+		# cv2.imwrite(f"./output/{image_counter_i}.png", frame)
+		# cv2.imshow("Real-Time Monitoring/Analysis Window", frame)
+		# cv2.
 		key = cv2.waitKey(1) & 0xFF
 
 		# if the `q` key was pressed, break from the loop
@@ -316,7 +326,7 @@ def run():
 			num_seconds=(t1-t0)
 			if num_seconds > 28800:
 				break
-
+		image_counter_i += 1
 	# stop the timer and display FPS information
 	fps.stop()
 	print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
